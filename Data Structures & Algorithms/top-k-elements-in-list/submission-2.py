@@ -1,14 +1,17 @@
 class Solution:
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:
-        store = {}
-        res = []
+        count = {}
         for num in nums:
-            if num not in store:
-                store[num] = 1
-            else:
-                store[num] += 1
+            count[num] = 1 + count.get(num, 0)
 
-        for key, val in store.items():
-            res.append([val, key])
-        res.sort(reverse=True)
-        return list(map(lambda n: n[1], res[:k]))
+        heap = []
+        for num in count.keys():
+            heapq.heappush(heap, (count[num], num))
+            if len(heap) > k:
+                heapq.heappop(heap)
+
+        res = []
+        for i in range(k):
+            res.append(heapq.heappop(heap)[1])
+
+        return res
